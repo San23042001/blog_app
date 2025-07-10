@@ -16,7 +16,7 @@ class BlogCubit extends Cubit<BlogState> {
   void createBlog(BlogParam param) async {
     try {
       emit(BlogLoading());
-      final blog = await _blogRepository.createBlog(param);
+      final blog = await _blogRepository.createBlog(await param.toFormData());
       emit(BlogSuccess(blog: blog));
     } catch (e) {
       emit(BlogFailure(error: e.toString()));

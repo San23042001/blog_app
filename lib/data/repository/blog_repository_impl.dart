@@ -1,9 +1,9 @@
 import 'package:blog_app/data/datasource/remote_data_souce/blog_remote_data_source/blog_remote_data_source.dart';
 
 import 'package:blog_app/data/models/blog/blog_response_model.dart';
-import 'package:blog_app/domain/entities/blog_params.dart';
 
 import 'package:blog_app/domain/repository/blog_repository.dart';
+import 'package:dio/dio.dart';
 
 import 'package:injectable/injectable.dart';
 
@@ -14,7 +14,7 @@ class BlogRepositoryImpl implements BlogRepository {
   BlogRepositoryImpl(this._blogRemoteDataSource);
 
   @override
-  Future<BlogResponseModel> createBlog(BlogParam param) async {
-    return await _blogRemoteDataSource.createBlog(param);
+  Future<BlogResponseModel> createBlog(FormData formData) async {
+    return await _blogRemoteDataSource.createBlog(formData);
   }
 }

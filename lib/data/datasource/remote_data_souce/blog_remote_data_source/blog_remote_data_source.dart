@@ -1,12 +1,11 @@
 import 'package:blog_app/constants/api_constants.dart';
 import 'package:blog_app/core/dio_client.dart';
 import 'package:blog_app/data/models/blog/blog_response_model.dart';
-import 'package:blog_app/domain/entities/blog_params.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class BlogRemoteDataSource {
-  Future<BlogResponseModel> createBlog(BlogParam param);
+  Future<BlogResponseModel> createBlog(FormData formData);
 }
 
 @LazySingleton(as: BlogRemoteDataSource)
@@ -16,17 +15,7 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   BlogRemoteDataSourceImpl(this._client);
 
   @override
-  Future<BlogResponseModel> createBlog(BlogParam param) async {
-    final formData = FormData.fromMap({
-      'title': param.title,
-      'content': param.content,
-      'status': param.status,
-      'banner_image': await MultipartFile.fromFile(
-        param.bannerImage.path,
-        filename: param.bannerImage.path.split('/').last,
-      ),
-    });
-
+  Future<BlogResponseModel> createBlog(FormData formData) async {
     final response = await _client.post(
       '${ApiConstants.baseUrl}/blogs',
       data: formData,

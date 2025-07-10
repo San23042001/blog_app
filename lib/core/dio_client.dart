@@ -18,15 +18,23 @@ class DioClient {
     Map<String, dynamic>? queryParams,
     Map<String, dynamic>? headers,
   }) async {
-    logger.i("Request send to path:$path");
+    final startTime = DateTime.now();
+    logger.i("GET Request sent to path: $path");
+
     try {
-      return await _dio.get(
+      final response = await _dio.get(
         path,
         queryParameters: queryParams,
         options: Options(headers: headers),
       );
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime).inMilliseconds;
+      logger.i("GET Response received from $path in ${duration}ms");
+      return response;
     } on DioException catch (e) {
-      logger.e("GET request failed: $path Error $e");
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime).inMilliseconds;
+      logger.e("GET request failed: $path in ${duration}ms. Error: $e");
       throw NetworkExceptions.getDioException(e);
     }
   }
@@ -36,36 +44,59 @@ class DioClient {
     dynamic data,
     Map<String, dynamic>? headers,
   }) async {
-    logger.i("Request sent to path: $path");
+    final startTime = DateTime.now();
+    logger.i("POST Request sent to path: $path");
 
     try {
-      return await _dio.post(
+      final response = await _dio.post(
         path,
         data: data,
         options: Options(headers: headers),
       );
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime).inMilliseconds;
+      logger.i("POST Response received from $path in ${duration}ms");
+      return response;
     } on DioException catch (e) {
-      logger.e("POST request failed: $path Error: $e Data: $data");
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime).inMilliseconds;
+      logger.e("POST request failed: $path in ${duration}ms. Error: $e Data: $data");
       throw NetworkExceptions.getDioException(e);
     }
   }
 
   Future<Response> put(String path, {dynamic data}) async {
-    logger.i("Request send to path:$path");
+    final startTime = DateTime.now();
+    logger.i("PUT Request sent to path: $path");
+
     try {
-      return await _dio.put(path, data: data);
+      final response = await _dio.put(path, data: data);
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime).inMilliseconds;
+      logger.i("PUT Response received from $path in ${duration}ms");
+      return response;
     } on DioException catch (e) {
-      logger.e("PUT request failed:$path Error $e");
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime).inMilliseconds;
+      logger.e("PUT request failed: $path in ${duration}ms. Error: $e");
       throw NetworkExceptions.getDioException(e);
     }
   }
 
   Future<Response> delete(String path, {dynamic data}) async {
-    logger.i("Request send to path:$path");
+    final startTime = DateTime.now();
+    logger.i("DELETE Request sent to path: $path");
+
     try {
-      return await _dio.delete(path, data: data);
+      final response = await _dio.delete(path, data: data);
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime).inMilliseconds;
+      logger.i("DELETE Response received from $path in ${duration}ms");
+      return response;
     } on DioException catch (e) {
-      logger.e("DELETE request failed: $path Error $e");
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime).inMilliseconds;
+      logger.e("DELETE request failed: $path in ${duration}ms. Error: $e");
       throw NetworkExceptions.getDioException(e);
     }
   }
