@@ -17,7 +17,7 @@ import '../core/dio_client.dart' as _i364;
 import '../core/dio_module.dart' as _i681;
 import '../core/refresh_token_interceptor.dart' as _i969;
 import '../core/token_interceptor.dart' as _i992;
-import '../data/datasource/blog_remote_data_source/blog_remote_data_source.dart'
+import '../data/datasource/remote_data_souce/blog_remote_data_source/blog_remote_data_source.dart'
     as _i95;
 import '../data/datasource/local_data_source/auth/auth_local_data_source.dart'
     as _i205;

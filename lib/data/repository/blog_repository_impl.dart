@@ -1,4 +1,4 @@
-import 'package:blog_app/data/datasource/blog_remote_data_source/blog_remote_data_source.dart';
+import 'package:blog_app/data/datasource/remote_data_souce/blog_remote_data_source/blog_remote_data_source.dart';
 
 import 'package:blog_app/data/models/blog/blog_response_model.dart';
 import 'package:blog_app/domain/entities/blog_params.dart';
