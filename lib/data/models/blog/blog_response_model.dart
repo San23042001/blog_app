@@ -13,7 +13,6 @@ class BlogResponseModel {
       _$BlogResponseModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$BlogResponseModelToJson(this);
-
 }
 
 @JsonSerializable()
@@ -25,7 +24,7 @@ class Blogs {
   @JsonKey(name: 'banner')
   Banner? banner;
   @JsonKey(name: 'author')
-  String? author;
+  Author? author;
   @JsonKey(name: 'viewsCount')
   int? viewsCount;
   @JsonKey(name: 'likesCount')
@@ -36,6 +35,8 @@ class Blogs {
   String? status;
   @JsonKey(name: 'slug')
   String? slug;
+  @JsonKey(name: 'publishAt')
+  DateTime? publishedAt;
 
   Blogs({
     required this.title,
@@ -46,19 +47,16 @@ class Blogs {
     required this.likesCount,
     required this.commentsCount,
     required this.status,
-
+    required this.publishedAt,
     required this.slug,
   });
 
-  factory Blogs.fromJson(Map<String, dynamic> json) =>
-      _$BlogsFromJson(json);
+  factory Blogs.fromJson(Map<String, dynamic> json) => _$BlogsFromJson(json);
   Map<String, dynamic> toJson() => _$BlogsToJson(this);
 }
 
 @JsonSerializable()
 class Banner {
-  @JsonKey(name: "publicId")
-  String? publicId;
   @JsonKey(name: "url")
   String? url;
   @JsonKey(name: "width")
@@ -66,13 +64,21 @@ class Banner {
   @JsonKey(name: "height")
   int? height;
 
-  Banner({
-    required this.publicId,
-    required this.url,
-    required this.width,
-    required this.height,
-  });
+  Banner({required this.url, required this.width, required this.height});
 
   factory Banner.fromJson(Map<String, dynamic> json) => _$BannerFromJson(json);
   Map<String, dynamic> toJson() => _$BannerToJson(this);
+}
+
+@JsonSerializable()
+class Author {
+  @JsonKey(name: "username")
+  String? username;
+  @JsonKey(name: "email")
+  String? email;
+
+  Author({required this.username, required this.email});
+
+  factory Author.fromJson(Map<String, dynamic> json) => _$AuthorFromJson(json);
+  Map<String, dynamic> toJson() => _$AuthorToJson(this);
 }

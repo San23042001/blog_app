@@ -32,6 +32,7 @@ class BlogApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: 'Quicksand',
+            scaffoldBackgroundColor: Colors.black,
             appBarTheme: AppBarTheme(
               iconTheme: IconThemeData(color: Colors.black),
               titleTextStyle: TextStyle(fontFamily: 'Quicksand', fontSize: 18),

@@ -103,7 +103,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                           setState(() {
                             _selectedImage = null;
                           });
-                          Navigator.pop(context);
+                          Navigator.pop(context,state.blog.blog);
                         } else if (state is BlogFailure) {
                           context.loaderOverlay.hide();
                           if (state.error.contains('Session expired')) {

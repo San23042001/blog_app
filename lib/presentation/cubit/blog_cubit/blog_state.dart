@@ -20,6 +20,15 @@ class BlogSuccess extends BlogState {
   List<Object> get props => [blog];
 }
 
+class BlogsSuccess extends BlogState {
+  final BlogsResponseModel blogs;
+
+  const BlogsSuccess({required this.blogs});
+
+  @override
+  List<Object> get props => [blogs];
+}
+
 class BlogFailure extends BlogState {
   final String error;
 

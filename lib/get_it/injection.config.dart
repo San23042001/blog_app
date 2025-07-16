@@ -17,14 +17,14 @@ import '../core/dio_client.dart' as _i364;
 import '../core/dio_module.dart' as _i681;
 import '../core/refresh_token_interceptor.dart' as _i969;
 import '../core/token_interceptor.dart' as _i992;
-import '../data/datasource/remote_data_souce/blog_remote_data_source/blog_remote_data_source.dart'
-    as _i95;
 import '../data/datasource/local_data_source/auth/auth_local_data_source.dart'
     as _i205;
 import '../data/datasource/local_data_source/token/token_local_data_source.dart'
     as _i778;
 import '../data/datasource/remote_data_souce/auth_remote_datasource/auth_remote_data_source.dart'
     as _i34;
+import '../data/datasource/remote_data_souce/blog_remote_data_source/blog_remote_data_source.dart'
+    as _i1064;
 import '../data/datasource/remote_data_souce/user_remote_datasource/user_remote_data_source.dart'
     as _i525;
 import '../data/repository/auth_repository_impl.dart' as _i461;
@@ -78,11 +78,14 @@ _i174.GetIt $initGetIt(
   gh.lazySingleton<_i525.UserRemoteDataSource>(
     () => _i525.UserRemoteDataSourceImpl(gh<_i364.DioClient>()),
   );
+  gh.lazySingleton<_i1064.BlogRemoteDataSource>(
+    () => _i1064.BlogRemoteDataSourceImpl(gh<_i364.DioClient>()),
+  );
   gh.lazySingleton<_i34.AuthRemoteDataSource>(
     () => _i34.AuthRemoteDataSourceImpl(gh<_i364.DioClient>()),
   );
-  gh.lazySingleton<_i95.BlogRemoteDataSource>(
-    () => _i95.BlogRemoteDataSourceImpl(gh<_i364.DioClient>()),
+  gh.lazySingleton<_i24.BlogRepository>(
+    () => _i931.BlogRepositoryImpl(gh<_i1064.BlogRemoteDataSource>()),
   );
   gh.lazySingleton<_i306.AuthRepository>(
     () => _i461.AuthRepositoryImpl(
@@ -102,9 +105,6 @@ _i174.GetIt $initGetIt(
   );
   gh.factory<_i1039.RegisterCubit>(
     () => _i1039.RegisterCubit(gh<_i306.AuthRepository>()),
-  );
-  gh.lazySingleton<_i24.BlogRepository>(
-    () => _i931.BlogRepositoryImpl(gh<_i95.BlogRemoteDataSource>()),
   );
   gh.lazySingleton<_i224.AuthCubit>(
     () => _i224.AuthCubit(gh<_i306.AuthRepository>()),
