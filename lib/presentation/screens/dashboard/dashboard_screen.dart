@@ -1,12 +1,15 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:blog_app/app_logger.dart';
 import 'package:blog_app/data/models/blog/blog_response_model.dart';
-
 import 'package:blog_app/domain/entities/pagination_params.dart';
 import 'package:blog_app/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:blog_app/presentation/cubit/blog_cubit/blog_cubit.dart';
 import 'package:blog_app/presentation/screens/auth/register_screen.dart';
 import 'package:blog_app/presentation/screens/dashboard/create_blog_screen.dart';
 import 'package:blog_app/presentation/widgets/custom_blog_card.dart';
+import 'package:blog_app/utils/debouncer.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,15 +31,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
     firstPageKey: 1,
   );
 
+  final TextEditingController _searchController = TextEditingController();
+  final Debounce _debouncer = Debounce(delay: Duration(milliseconds: 500));
+  String? _searchQuery;
+
   @override
   void initState() {
     super.initState();
 
     _pagingController.addPageRequestListener((pageKey) {
       final offset = (pageKey - 1) * _pageSize;
-      final params = PaginationParams(limit: _pageSize, offset: offset);
+      final params = PaginationParams(
+        limit: _pageSize,
+        offset: offset,
+        search: _searchQuery,
+      );
+
       logger.i(
-        "📤 Fetching page $pageKey with offset $offset and limit $_pageSize",
+        "📤 Fetching page $pageKey with offset $offset and search: $_searchQuery",
       );
       context.read<BlogCubit>().fetchBlogs(params);
     });
@@ -45,7 +57,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void dispose() {
     _pagingController.dispose();
+    _searchController.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged(String value) {
+    _debouncer.run(() {
+      setState(() {
+        _searchQuery = value.trim().isEmpty ? null : value.trim();
+      });
+      logger.i("🔍 Searching for: $_searchQuery");
+      _pagingController.refresh();
+    });
+  }
+
+  Widget _buildGlassSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withOpacity(0.3)),
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _onSearchChanged,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                hintText: 'Search blogs...',
+                hintStyle: TextStyle(color: Colors.white70),
+                border: InputBorder.none,
+                prefixIcon: Icon(Icons.search, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -138,25 +191,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _pagingController.error = state.error;
           }
         },
-        child: RefreshIndicator(
-          onRefresh: () => Future.sync(() {
-            logger.i("🔄 Refresh triggered");
-            return _pagingController.refresh();
-          }),
-          child: PagedListView<int, Blogs>(
-            pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<Blogs>(
-              itemBuilder: (context, blog, index) => CustomBlogCard(blog: blog),
-              noItemsFoundIndicatorBuilder: (context) =>
-                  const Center(child: Text("No blogs found")),
-              newPageProgressIndicatorBuilder: (context) => const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
-              firstPageProgressIndicatorBuilder: (context) => const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+        child: Column(
+          children: [
+            _buildGlassSearchBar(),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => Future.sync(() {
+                  logger.i("🔄 Refresh triggered");
+                  return _pagingController.refresh();
+                }),
+                child: PagedListView<int, Blogs>(
+                  pagingController: _pagingController,
+                  builderDelegate: PagedChildBuilderDelegate<Blogs>(
+                    itemBuilder: (context, blog, index) =>
+                        CustomBlogCard(blog: blog),
+                    noItemsFoundIndicatorBuilder: (context) =>
+                        const Center(child: Text("No blogs found")),
+                    newPageProgressIndicatorBuilder: (context) => const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                    firstPageProgressIndicatorBuilder: (context) =>
+                        const Center(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        ),
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

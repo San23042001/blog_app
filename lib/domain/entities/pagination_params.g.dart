@@ -9,8 +9,13 @@ part of 'pagination_params.dart';
 PaginationParams _$PaginationParamsFromJson(Map<String, dynamic> json) =>
     PaginationParams(
       limit: (json['limit'] as num?)?.toInt() ?? 20,
-      offset: (json['offset'] as num?)?.toInt() ?? 2,
+      offset: (json['offset'] as num?)?.toInt() ?? 0,
+      search: json['search'] as String?,
     );
 
 Map<String, dynamic> _$PaginationParamsToJson(PaginationParams instance) =>
-    <String, dynamic>{'limit': instance.limit, 'offset': instance.offset};
+    <String, dynamic>{
+      'limit': instance.limit,
+      'offset': instance.offset,
+      'search': instance.search,
+    };

@@ -6,10 +6,14 @@ part 'pagination_params.g.dart';
 class PaginationParams {
   @JsonKey(name: 'limit') // limit = 5 gives 5 blogs
   int? limit;
+
   @JsonKey(name: 'offset') // offset = 10 skips the first 10 blogs
   int? offset;
 
-  PaginationParams({this.limit = 20, this.offset = 2});
+  @JsonKey(name: 'search') // search query string
+  String? search;
+
+  PaginationParams({this.limit = 20, this.offset = 0, this.search});
 
   factory PaginationParams.fromJson(Map<String, dynamic> json) =>
       _$PaginationParamsFromJson(json);
