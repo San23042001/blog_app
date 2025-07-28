@@ -164,13 +164,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         listener: (context, state) {
           if (state is BlogsSuccess) {
             List<Blogs> blogs = state.blogs.blogs;
-            blogs.sort((a, b) {
-              final aDate =
-                  a.publishedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-              final bDate =
-                  b.publishedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-              return bDate.compareTo(aDate);
-            });
 
             final currentPageKey = _pagingController.nextPageKey ?? 1;
             logger.i(
