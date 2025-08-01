@@ -109,7 +109,10 @@ _i174.GetIt $initGetIt(
   gh.lazySingleton<_i224.AuthCubit>(
     () => _i224.AuthCubit(gh<_i306.AuthRepository>()),
   );
-  gh.factory<_i284.BlogCubit>(() => _i284.BlogCubit(gh<_i24.BlogRepository>()));
+  gh.factory<_i284.BlogCubit>(
+    () =>
+        _i284.BlogCubit(gh<_i24.BlogRepository>(), gh<_i306.AuthRepository>()),
+  );
   return getIt;
 }
 

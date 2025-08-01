@@ -26,7 +26,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  static const _pageSize = 20;
+  static const _pageSize = 10;
   final PagingController<int, Blogs> _pagingController = PagingController(
     firstPageKey: 1,
   );
@@ -179,6 +179,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
               logger.i("➡️ Preparing next page key: $nextPageKey");
               _pagingController.appendPage(blogs, nextPageKey);
             }
+          } else if (state is BlogLikeSuccess) {
+            final likedBlogId = state.likeBlog.blogId;
+            final updatedLikes = state.likeBlog.likesCount;
+
+            final currentList = _pagingController.itemList;
+            if (currentList != null) {
+              final index = currentList.indexWhere(
+                (b) => b.blogId == likedBlogId,
+              );
+              if (index != -1) {
+                final updatedBlog = currentList[index].copyWith(
+                  likesCount: updatedLikes,
+                );
+                setState(() {
+                  currentList[index] = updatedBlog;
+                  _pagingController.itemList = List.from(
+                    currentList,
+                  ); // Triggers rebuild
+                });
+              }
+            }
           } else if (state is BlogFailure) {
             logger.e("❌ Error while fetching blogs: ${state.error}");
             _pagingController.error = state.error;
@@ -196,8 +217,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: PagedListView<int, Blogs>(
                   pagingController: _pagingController,
                   builderDelegate: PagedChildBuilderDelegate<Blogs>(
-                    itemBuilder: (context, blog, index) =>
-                        CustomBlogCard(blog: blog),
+                    itemBuilder: (context, blog, index) => CustomBlogCard(
+                      blog: blog,
+                      likeBlog: () {
+                        context.read<BlogCubit>().likeBlog(blog.blogId);
+                      },
+                    ),
                     noItemsFoundIndicatorBuilder: (context) =>
                         const Center(child: Text("No blogs found")),
                     newPageProgressIndicatorBuilder: (context) => const Center(

@@ -11,21 +11,24 @@ abstract class AuthLocalDataSource {
   Future<void> cacheUser(User user);
   Future<void> deleteUser();
   Future<User?> getUser();
+  Future<String?> getUserId();
 }
 
 @LazySingleton(as: AuthLocalDataSource)
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> cacheUser(User user) async {
-    final Box accountBox = await Hive.openBox(HiveConstants.userBoxName);
+    final Box box = await Hive.openBox(HiveConstants.userBoxName);
+    await box.put(HiveConstants.userKey, user);
+    await box.put(HiveConstants.userIdKey, user.userId);
     logInfo(_h, "User cached successfully");
-    return await accountBox.put(HiveConstants.userKey, user);
   }
 
   @override
   Future<void> deleteUser() async {
     final box = await Hive.openBox(HiveConstants.userBoxName);
     await box.delete(HiveConstants.userKey);
+    await box.delete(HiveConstants.userIdKey);
   }
 
   @override
@@ -33,5 +36,11 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     logger.d("GetCachedUser");
     final box = await Hive.openBox(HiveConstants.userBoxName);
     return box.get(HiveConstants.userKey);
+  }
+
+  @override
+  Future<String?> getUserId() async {
+    final box = await Hive.openBox(HiveConstants.userBoxName);
+    return box.get(HiveConstants.userIdKey) as String?;
   }
 }

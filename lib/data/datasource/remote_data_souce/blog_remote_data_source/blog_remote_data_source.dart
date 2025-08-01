@@ -1,6 +1,7 @@
 import 'package:blog_app/constants/api_constants.dart';
 import 'package:blog_app/core/dio_client.dart';
 import 'package:blog_app/data/models/blog/blog_response_model.dart';
+import 'package:blog_app/data/models/blog/like_response_model.dart';
 import 'package:blog_app/data/models/blogs/blogs_response_model.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
@@ -8,6 +9,11 @@ import 'package:injectable/injectable.dart';
 abstract class BlogRemoteDataSource {
   Future<BlogResponseModel> createBlog(FormData formData);
   Future<BlogsResponseModel> getAllBlogs(Map<String, dynamic> params);
+  Future<LikeResponseModel> likeBlog(
+    Map<String, dynamic> params,
+    String blogId,
+  );
+  Future<void> dislikeBlog(Map<String, dynamic> params, String blogId);
 }
 
 @LazySingleton(as: BlogRemoteDataSource)
@@ -33,5 +39,25 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       queryParams: params,
     );
     return BlogsResponseModel.fromJson(response.data);
+  }
+
+  @override
+  Future<LikeResponseModel> likeBlog(
+    Map<String, dynamic> params,
+    String blogId,
+  ) async {
+    final response = await _client.post(
+      '${ApiConstants.baseUrl}/likes/blog/$blogId',
+      data: params,
+    );
+    return LikeResponseModel.fromJson(response.data);
+  }
+
+  @override
+  Future<void> dislikeBlog(Map<String, dynamic> params, String blogId) async {
+    await _client.delete(
+      '${ApiConstants.baseUrl}/likes/blog/$blogId',
+      data: params,
+    );
   }
 }

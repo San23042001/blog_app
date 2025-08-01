@@ -11,6 +11,8 @@ class BlogInitial extends BlogState {}
 
 class BlogLoading extends BlogState {}
 
+class BlogLikeLoading extends BlogState {}
+
 class BlogSuccess extends BlogState {
   final BlogResponseModel blog;
 
@@ -27,6 +29,23 @@ class BlogsSuccess extends BlogState {
 
   @override
   List<Object> get props => [blogs];
+}
+
+class BlogLikeSuccess extends BlogState {
+  final LikeResponseModel likeBlog;
+
+  const BlogLikeSuccess({required this.likeBlog});
+  @override
+  List<Object> get props => [likeBlog];
+}
+
+class BlogLikeFailure extends BlogState {
+  final String error;
+
+  const BlogLikeFailure({required this.error});
+
+  @override
+  List<Object?> get props => [error];
 }
 
 class BlogFailure extends BlogState {

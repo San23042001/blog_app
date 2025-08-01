@@ -6,7 +6,9 @@ import 'package:intl/intl.dart';
 
 class CustomBlogCard extends StatelessWidget {
   final Blogs blog;
-  const CustomBlogCard({super.key, required this.blog});
+  final void Function()? likeBlog;
+
+  const CustomBlogCard({super.key, required this.blog, this.likeBlog});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,6 @@ class CustomBlogCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            // Background Image
             if (imageUrl.isNotEmpty)
               CachedNetworkImage(
                 imageUrl: imageUrl,
@@ -34,8 +35,6 @@ class CustomBlogCard extends StatelessWidget {
                 height: 250,
                 width: double.infinity,
               ),
-
-            // Glass Effect Info Panel at Bottom
             Positioned(
               bottom: 0,
               left: 0,
@@ -52,7 +51,6 @@ class CustomBlogCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title
                         Text(
                           title,
                           maxLines: 2,
@@ -64,8 +62,6 @@ class CustomBlogCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-
-                        // Content
                         Text(
                           content,
                           maxLines: 2,
@@ -76,8 +72,6 @@ class CustomBlogCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-
-                        // Author & Date
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -98,7 +92,6 @@ class CustomBlogCard extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 8),
 
                         // Like & Comment Buttons
@@ -108,13 +101,15 @@ class CustomBlogCard extends StatelessWidget {
                             Row(
                               children: [
                                 IconButton(
-                                  icon: const Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.white,
+                                  icon: Icon(
+                                    likes > 0
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: likes > 0
+                                        ? Colors.red
+                                        : Colors.white,
                                   ),
-                                  onPressed: () {
-                                    // TODO: Handle Like Logic
-                                  },
+                                  onPressed: likeBlog,
                                 ),
                                 Text(
                                   likes.toString(),

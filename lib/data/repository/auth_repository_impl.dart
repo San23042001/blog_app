@@ -54,4 +54,9 @@ class AuthRepositoryImpl implements AuthRepository {
     await _authLocalDataSource.deleteUser();
     await _tokenLocalDataSource.deleteAllTokens();
   }
+
+  @override
+  Future<String?> getUserId() async {
+    return await _authLocalDataSource.getUserId();
+  }
 }

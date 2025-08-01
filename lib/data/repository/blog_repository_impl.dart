@@ -1,6 +1,7 @@
 import 'package:blog_app/data/datasource/remote_data_souce/blog_remote_data_source/blog_remote_data_source.dart';
 
 import 'package:blog_app/data/models/blog/blog_response_model.dart';
+import 'package:blog_app/data/models/blog/like_response_model.dart';
 import 'package:blog_app/data/models/blogs/blogs_response_model.dart';
 
 import 'package:blog_app/domain/repository/blog_repository.dart';
@@ -20,7 +21,20 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<BlogsResponseModel> getAllBlogs(Map<String, dynamic> params) async{
+  Future<BlogsResponseModel> getAllBlogs(Map<String, dynamic> params) async {
     return await _blogRemoteDataSource.getAllBlogs(params);
+  }
+
+  @override
+  Future<LikeResponseModel> likeBlog(
+    Map<String, dynamic> params,
+    String blogId,
+  ) async {
+    return await _blogRemoteDataSource.likeBlog(params, blogId);
+  }
+
+  @override
+  Future<void> dislikeBlog(Map<String, dynamic> params, String blogId) async {
+    await _blogRemoteDataSource.dislikeBlog(params, blogId);
   }
 }
