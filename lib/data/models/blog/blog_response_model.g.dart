@@ -15,6 +15,7 @@ Map<String, dynamic> _$BlogResponseModelToJson(BlogResponseModel instance) =>
     <String, dynamic>{'blog': instance.blog};
 
 Blogs _$BlogsFromJson(Map<String, dynamic> json) => Blogs(
+  blogId: json['_id'] as String,
   title: json['title'] as String?,
   content: json['content'] as String?,
   banner:
@@ -37,6 +38,7 @@ Blogs _$BlogsFromJson(Map<String, dynamic> json) => Blogs(
 );
 
 Map<String, dynamic> _$BlogsToJson(Blogs instance) => <String, dynamic>{
+  '_id': instance.blogId,
   'title': instance.title,
   'content': instance.content,
   'banner': instance.banner,

@@ -4,5 +4,6 @@ abstract class AuthRepository {
   Future<UserResponseModel> register(Map<String, dynamic> params);
   Future<UserResponseModel> login(Map<String, dynamic> params);
   Future<User?> getUser();
+  Future<String?> getUserId();
   Future<void> logout();
 }

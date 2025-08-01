@@ -17,6 +17,8 @@ class BlogResponseModel {
 
 @JsonSerializable()
 class Blogs {
+  @JsonKey(name: '_id')
+  final String blogId;
   @JsonKey(name: 'title')
   String? title;
   @JsonKey(name: 'content')
@@ -39,6 +41,7 @@ class Blogs {
   DateTime? publishedAt;
 
   Blogs({
+    required this.blogId,
     required this.title,
     required this.content,
     required this.banner,
@@ -81,4 +84,24 @@ class Author {
 
   factory Author.fromJson(Map<String, dynamic> json) => _$AuthorFromJson(json);
   Map<String, dynamic> toJson() => _$AuthorToJson(this);
+}
+
+extension BlogsExtension on Blogs {
+  Blogs copyWith({
+    int? likesCount,
+  }) {
+    return Blogs(
+      blogId: blogId,
+      title: title,
+      content: content,
+      banner: banner,
+      author: author,
+      viewsCount: viewsCount,
+      likesCount: likesCount ?? this.likesCount,
+      commentsCount: commentsCount,
+      status: status,
+      publishedAt: publishedAt,
+      slug: slug,
+    );
+  }
 }

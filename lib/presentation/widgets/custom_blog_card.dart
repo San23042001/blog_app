@@ -1,12 +1,17 @@
 import 'dart:ui';
 import 'package:blog_app/data/models/blog/blog_response_model.dart';
+import 'package:blog_app/presentation/cubit/blog_cubit/blog_cubit.dart';
+import 'package:blog_app/presentation/widgets/custom_comments_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class CustomBlogCard extends StatelessWidget {
   final Blogs blog;
-  const CustomBlogCard({super.key, required this.blog});
+  final void Function()? likeBlog;
+
+  const CustomBlogCard({super.key, required this.blog, this.likeBlog});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +31,6 @@ class CustomBlogCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            // Background Image
             if (imageUrl.isNotEmpty)
               CachedNetworkImage(
                 imageUrl: imageUrl,
@@ -34,8 +38,6 @@ class CustomBlogCard extends StatelessWidget {
                 height: 250,
                 width: double.infinity,
               ),
-
-            // Glass Effect Info Panel at Bottom
             Positioned(
               bottom: 0,
               left: 0,
@@ -52,7 +54,6 @@ class CustomBlogCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title
                         Text(
                           title,
                           maxLines: 2,
@@ -64,8 +65,6 @@ class CustomBlogCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-
-                        // Content
                         Text(
                           content,
                           maxLines: 2,
@@ -76,8 +75,6 @@ class CustomBlogCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-
-                        // Author & Date
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -98,7 +95,6 @@ class CustomBlogCard extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 8),
 
                         // Like & Comment Buttons
@@ -108,13 +104,15 @@ class CustomBlogCard extends StatelessWidget {
                             Row(
                               children: [
                                 IconButton(
-                                  icon: const Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.white,
+                                  icon: Icon(
+                                    likes > 0
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: likes > 0
+                                        ? Colors.red
+                                        : Colors.white,
                                   ),
-                                  onPressed: () {
-                                    // TODO: Handle Like Logic
-                                  },
+                                  onPressed: likeBlog,
                                 ),
                                 Text(
                                   likes.toString(),
@@ -129,10 +127,52 @@ class CustomBlogCard extends StatelessWidget {
                                     Icons.comment_outlined,
                                     color: Colors.white,
                                   ),
-                                  onPressed: () {
-                                    // TODO: Show comments bottom sheet
+                                  onPressed: () async {
+                                    context.read<BlogCubit>().fetchComments(
+                                      blog.blogId,
+                                    );
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (_) {
+                                        return BlocBuilder<
+                                          BlogCubit,
+                                          BlogState
+                                        >(
+                                          builder: (context, state) {
+                                            if (state is BlogCommentsLoading) {
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color: Colors.black,
+                                                    ),
+                                              );
+                                            } else if (state
+                                                is BlogCommentsSuccess) {
+                                              return CustomCommentsBottomSheet(
+                                                blogId: blog.blogId,
+                                                comments: state.comments,
+                                              );
+                                            } else if (state
+                                                is BlogCommentFailure) {
+                                              return Center(
+                                                child: Text(
+                                                  state.error,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            return SizedBox();
+                                          },
+                                        );
+                                      },
+                                    );
                                   },
                                 ),
+
                                 Text(
                                   comments.toString(),
                                   style: const TextStyle(color: Colors.white),
